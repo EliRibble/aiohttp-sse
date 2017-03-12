@@ -10,6 +10,7 @@ matrix:
           env: TOXENV=py36
 
 install:
+    - pip install git+https://github.com/aio-libs/aiohttp.git
     - pip install tox codecov
 script:
     tox

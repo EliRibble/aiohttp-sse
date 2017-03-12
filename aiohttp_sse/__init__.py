@@ -56,10 +56,6 @@ class EventSourceResponse(StreamResponse):
         """
         if request.method != 'GET':
             raise HTTPMethodNotAllowed(request.method, ['GET'])
-
-        resp_impl = self._start_pre_check(request)
-        if resp_impl is not None:
-            return resp_impl
         resp_impl = yield from super().prepare(request)
         self._prepare_sse(request.app.loop)
         return resp_impl
@@ -69,7 +65,7 @@ class EventSourceResponse(StreamResponse):
         self._ping_task = loop.create_task(self._ping())
         # explicitly enabling chunked encoding, since content length
         # usually not known beforehand.
-        self._resp_impl.enable_chunked_encoding()
+        self.enable_chunked_encoding()
 
     def send(self, data, id=None, event=None, retry=None):
         """Send data using EventSource protocol
@@ -113,6 +109,7 @@ class EventSourceResponse(StreamResponse):
         if self._ping_task is None:
             raise RuntimeError('Response is not started')
         with contextlib.suppress(asyncio.CancelledError):
+            self._ping_task.cancel()
             yield from self._ping_task
 
     def stop_streaming(self):

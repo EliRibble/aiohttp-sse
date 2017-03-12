@@ -6,7 +6,7 @@ from aiohttp_sse import EventSourceResponse, sse_response
 
 
 @pytest.mark.asyncio(forbid_global_loop=True)
-@pytest.mark.parametrize('with_deprecated_start', (False, True))
+@pytest.mark.parametrize('with_deprecated_start', (False, ))
 @pytest.mark.parametrize('with_sse_response', (False, True),
                          ids=('without_sse_response',
                               'with_sse_response'))
@@ -63,7 +63,7 @@ def test_func(loop, unused_tcp_port, with_deprecated_start,
     resp.close()
     srv.close()
     yield from srv.wait_closed()
-    yield from handler.shutdown(0)
+    # yield from handler.shutdown(1)
 
 
 @pytest.mark.asyncio(forbid_global_loop=True)
@@ -104,7 +104,7 @@ def test_wait_stop_streaming(loop, unused_tcp_port, session):
 
     srv.close()
     yield from srv.wait_closed()
-    yield from handler.shutdown(0)
+    # yield from handler.shutdown(1)
 
 
 @pytest.mark.asyncio(forbid_global_loop=True)
@@ -139,7 +139,7 @@ def test_retry(loop, unused_tcp_port, session):
 
     srv.close()
     yield from srv.wait_closed()
-    yield from handler.shutdown(0)
+    # yield from handler.shutdown(1)
 
 
 @pytest.mark.asyncio(forbid_global_loop=True)
@@ -213,4 +213,4 @@ def test_ping(loop, unused_tcp_port, session):
     assert streamed_data == expected
     srv.close()
     yield from srv.wait_closed()
-    yield from handler.shutdown(0)
+    # yield from handler.shutdown(1)
